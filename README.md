@@ -42,6 +42,7 @@ Running Sushi has been developed to address the following issues with the normal
 
 * Mixlib::Config
 * [chef_diff](https://github.com/One-com/chef_diff)
+* [slack-notifier](https://github.com/stevenosloan/slack-notifier)
 
 ## Installation
 
@@ -99,6 +100,7 @@ In addition the following are also available:
 * rev_checkpoint - Name of the file to store the last-uploaded revision,
   relative to `reponame`. Default: `chef_delivery_revision`
 * plugin_path - Path to plugin file. Default: `/etc/chef_delivery_config_plugin.rb`
+* slack_url - Slack incoming webhook url to post notifications to. Default: nil
 
 ## Usage
 
