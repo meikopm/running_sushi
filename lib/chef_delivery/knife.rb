@@ -157,7 +157,7 @@ module ChefDelivery
         files.each do |f|
           @logger.info "Upload from #{f}"
           updated = loader.object_from_file(f)
-          @slack.ping "*#{Time.now.getutc}* - #{component_type} #{f} uploaded into #{ENV["CHEF_ENV"]} chef in #{@pod} - #{updated}" if @slack
+          @slack.ping "*#{Time.now.getutc}* - #{component_type} *#{f}* uploaded into *#{ENV["CHEF_ENV"]}* chef in *#{@pod}* - #{updated}" if @slack
           if checkpoint
             updated.normal['running_sushi']['checkpoint'] = checkpoint
           end
@@ -175,7 +175,7 @@ module ChefDelivery
           begin
             chef_component = klass.load(component.name)
             chef_component.destroy
-            @slack.ping "*#{Time.now.getutc}* - #{component_type} #{component.name} deleted from #{ENV["CHEF_ENV"]} chef in #{@pod}" if @slack
+            @slack.ping "*#{Time.now.getutc}* - #{component_type} *#{component.name}* deleted from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}*" if @slack
           rescue Net::HTTPServerException => e
             raise e unless e.response.code == '404'
             @logger.info "#{component_type} #{component.name} not found. Cannot delete"
