@@ -28,6 +28,7 @@ require 'chef/config'
 require 'optparse'
 require 'logger'
 require 'json'
+require 'slack-notifier'
 
 # rubocop:disable GlobalVars
 
@@ -294,6 +295,12 @@ def upload_changed(repo, checkpoint)
 
   node_dir, client_dir, environment_dir, role_local_dir = get_pod_config
 
+  if ChefDelivery::Config.slack_url
+    slack = Slack::Notifier.new ChefDelivery::Config.slack_url
+  else
+    slack = nil
+  end
+
   knife = ChefDelivery::Knife.new(
       logger: ChefDelivery::Log,
       config: ChefDelivery::Config.knife_config,
@@ -309,7 +316,9 @@ def upload_changed(repo, checkpoint)
       node_dir: File.join(base_dir, node_dir),
       role_dir: File.join(base_dir, ChefDelivery::Config.role_path),
       role_local_dir: File.join(base_dir, role_local_dir),
-      user_dir: File.join(base_dir, ChefDelivery::Config.user_path)
+      user_dir: File.join(base_dir, ChefDelivery::Config.user_path),
+      pod: ChefDelivery::Config.pod_name,
+      slack: slack
   )
 
   chef_upload(knife, repo, checkpoint, local_head)

@@ -55,6 +55,8 @@ module ChefDelivery
       @checksum_dir = opts[:checksum_dir]
       @master_path = opts[:master_path]
       @base_dir = opts[:base_dir]
+      @pod = opts[:pod]
+      @slack = opts[:slack]
     end
 
     def http_api
@@ -155,6 +157,7 @@ module ChefDelivery
         files.each do |f|
           @logger.info "Upload from #{f}"
           updated = loader.object_from_file(f)
+          @slack.ping "*#{Time.now.getutc}* - #{component_type} #{f} uploaded into #{ENV["CHEF_ENV"]} chef in #{@pod} - #{updated}" if @slack
           if checkpoint
             updated.normal['running_sushi']['checkpoint'] = checkpoint
           end
@@ -172,6 +175,7 @@ module ChefDelivery
           begin
             chef_component = klass.load(component.name)
             chef_component.destroy
+            @slack.ping "*#{Time.now.getutc}* - #{component_type} #{component.name} deleted from #{ENV["CHEF_ENV"]} chef in #{@pod}" if @slack
           rescue Net::HTTPServerException => e
             raise e unless e.response.code == '404'
             @logger.info "#{component_type} #{component.name} not found. Cannot delete"
@@ -258,6 +262,7 @@ module ChefDelivery
           cb_version_loader = \
             Chef::Cookbook::CookbookVersionLoader.new(full_cb_path)
           cb_version_loader.load_cookbooks
+          @slack.ping "*#{Time.now.getutc}* - Cookbook *#{cb}* uploaded into *#{ENV["CHEF_ENV"]}* chef in *#{@pod}*" if @slack
 
           # Handle versioned tagged cookbook by extracting name
           # from cookbook dir
@@ -290,9 +295,11 @@ module ChefDelivery
             if cb_version
               @logger.info " Deleting #{cb_version}"
               chef_cb_deleter.delete_version_without_confirmation(cb_version)
+              @slack.ping "*#{Time.now.getutc}* - Cookbook *#{cb}* with version #{cb_version} deleted from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}*" if @slack
             else
               @logger.info ' Deleting all'
               chef_cb_deleter.delete_all_without_confirmation
+              @slack.ping "*#{Time.now.getutc}* - Cookbook *#{cb}* deleted from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}*" if @slack
             end
 
           rescue Net::HTTPServerException => e

@@ -52,5 +52,6 @@ module ChefDelivery
     vcs_type 'git'
     vcs_path nil
     plugin_path '/etc/chef_delivery_plugin.rb'
+    slack_url nil
   end
 end
