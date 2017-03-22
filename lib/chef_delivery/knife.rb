@@ -174,8 +174,8 @@ module ChefDelivery
           @logger.info "Deleting #{component.name}"
           begin
             chef_component = klass.load(component.name)
-            chef_component.destroy
-            @slack.ping "*#{Time.now.getutc}* - #{component_type} *#{component.name}* deleted from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}*" if @slack
+            # chef_component.destroy
+            @slack.ping "*#{Time.now.getutc}* - #{component_type} *#{component.name}* DELETE from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}* attempted (DELETES DISABLED IN RUNNING_SUSHI)" if @slack
           rescue Net::HTTPServerException => e
             raise e unless e.response.code == '404'
             @logger.info "#{component_type} #{component.name} not found. Cannot delete"
@@ -294,12 +294,12 @@ module ChefDelivery
 
             if cb_version
               @logger.info " Deleting #{cb_version}"
-              chef_cb_deleter.delete_version_without_confirmation(cb_version)
-              @slack.ping "*#{Time.now.getutc}* - Cookbook *#{cb}* with version #{cb_version} deleted from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}*" if @slack
+              # chef_cb_deleter.delete_version_without_confirmation(cb_version)
+              @slack.ping "*#{Time.now.getutc}* - Cookbook *#{cb}* with version #{cb_version} delete from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}* attempted (DELETES DISABLED IN RUNNING_SUSHI)" if @slack
             else
               @logger.info ' Deleting all'
-              chef_cb_deleter.delete_all_without_confirmation
-              @slack.ping "*#{Time.now.getutc}* - Cookbook *#{cb}* deleted from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}*" if @slack
+              # chef_cb_deleter.delete_all_without_confirmation
+              @slack.ping "*#{Time.now.getutc}* - Cookbook *#{cb}* delete from *#{ENV["CHEF_ENV"]}* chef in *#{@pod}* attempted (DELETES DISABLED IN RUNNING_SUSHI)" if @slack
             end
 
           rescue Net::HTTPServerException => e
