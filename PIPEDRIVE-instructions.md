@@ -1,10 +1,13 @@
-# How to build `Running Sushi` for Pipedrive Chef servers.
+# How to build Running Sushi for Pipedrive Chef servers.
 
-## Dependencies
+### Dependencies
 * [chef_diff](https://github.com/One-com/chef_diff)
 * [slack-notifier](https://github.com/stevenosloan/slack-notifier)
 
-On a Chef server first build and install needed tools:
+## 1) Build and install tools
+
+On a Chef server build and install needed tools:
+
 ```
 # Create a directory for building
 mkdir -p build; cd build
@@ -17,7 +20,10 @@ cd running_sushi/ && /opt/chef/embedded/bin/gem build chef_deliver.gemspec && /o
 /opt/chef/embedded/bin/gem install slack-notifier
 ```
 
-And secondly create a config file for `running_sushi` (`chef-delivery`) in `/etc/chef/chef_delivery_config.rb` like:
+## 2) Create config file
+
+Create a config file for `running_sushi` (`chef-delivery`) in `/etc/chef/chef_delivery_config.rb` like:
+
 ```
 # master_path - The top-level path for Running Sushi's work. Most other paths are relative to this. Default: /var/chef/chef_delivery_work
 repo_url 'git@github.com:pipedrive/chef-repo.git'
@@ -42,3 +48,15 @@ slack_url 'https://hooks.slack.com/services/T024G6CBF/B2QLCR0TE/oKtSDjIUzvdEPEpV
 Config parameters that need to be adjusted for each separate chef server are:
 - pod_name - the name of the region Chef server is in
 - chef_server_url - Full URL (with Chef organization) to the Chef server used
+
+## 3) Schedule the execution
+
+Running Sushi is triggered using `cron`.
+Add the following line to Chef server `cron`:
+
+```
+# Running sushi
+*/5 * * * * bash -c 'source /root/.bash_profile; chef-delivery -T;'
+```
+
+Cron execution logs are stored in `/var/log/syslog`
