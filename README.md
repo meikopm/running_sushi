@@ -1,5 +1,9 @@
 # Running Sushi
 
+## How to set up Running Sushi in Pipedrive
+
+See instructions [here](./PIPEDRIVE-instructions.md)
+
 ## Intro
 
 Welcome to Running Sushi, software to keep cookbooks, clients, databags, environments, nodes, roles and users in
