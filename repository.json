@@ -1,0 +1,6 @@
+{
+  "name": "running_sushi",
+  "description": "Git repo tracking for distributed Chef Servers",
+  "owner": "Pipedrive",
+  "type": "application"
+}
